@@ -1,0 +1,31 @@
+localhost:80 # Your site's address
+
+ext .html   # Clean URLs
+
+# API load balancer
+proxy /app localhost:8080 localhost:8081
+
+## Logging
+
+log / stdout
+#log / stdout "{combined}"
+log / logs/request.log "{combined}" {
+    ipmask 255.255.0.0 ffff:ffff:ffff:ff00::
+	rotate_size 50  # Rotate after 50 MB
+	rotate_age  90  # Keep rotated files for 90 days
+	rotate_keep 20  # Keep at most 20 log files
+	rotate_compress # Compress rotated log files in gzip format
+}
+
+## Error log
+errors logs/error.log {
+    404 html/error-404.html   # Custom error page
+    500 html/error-50x.html
+    502 html/error-50x.html
+    503 html/error-50x.html
+
+	rotate_size 50  # Rotate after 50 MB
+	rotate_age  90  # Keep rotated files for 90 days
+	rotate_keep 20  # Keep at most 20 log files
+	rotate_compress # Compress rotated log files in gzip format
+}
