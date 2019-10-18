@@ -28,3 +28,34 @@ errors logs/error.log {
 	rotate_keep 20  # Keep at most 20 log files
 	rotate_compress # Compress rotated log files in gzip format
 }
+
+### Experimental
+
+# http://localhost/debug/pprof/
+#pprof
+
+gzip
+
+header / {
+	# Enable HTTP Strict Transport Security (HSTS) to force clients to always
+	# connect via HTTPS (do not use if only testing)
+	Strict-Transport-Security "max-age=31536000;"
+	# Enable cross-site filter (XSS) and tell browser to block detected attacks
+	X-XSS-Protection "1; mode=block"
+	# Prevent some browsers from MIME-sniffing a response away from the declared Content-Type
+	X-Content-Type-Options "nosniff"
+	# Disallow the site to be rendered within a frame (clickjacking protection)
+	X-Frame-Options "DENY"
+}
+
+# plugin: http.cache
+cache {
+	match_path /assets
+	match_header Content-Type image/jpg image/png
+	status_header X-Cache-Status
+	default_max_age 15m
+	path tmp/caddy-cache
+}
+
+# plugin: http.minify
+minify /assets
